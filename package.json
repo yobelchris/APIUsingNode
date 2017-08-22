@@ -1,0 +1,26 @@
+{
+  "name": "apiusingnode",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yobel",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.4",
+    "morgan": "^1.8.2",
+    "mysql": "^2.14.1"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yobelchris/APIUsingNode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yobelchris/APIUsingNode/issues"
+  },
+  "homepage": "https://github.com/yobelchris/APIUsingNode#readme",
+  "description": ""
+}
