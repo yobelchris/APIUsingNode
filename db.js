@@ -1,5 +1,6 @@
 var mysql = require("mysql");
-function connection(){
+function Connection() {
+
   this.pool = null;
 
   var konek = {
@@ -9,15 +10,14 @@ function connection(){
     database : 'db_adroit'
   };
 
-  this.init = function(){
+  this.init = function() {
     this.pool = mysql.createPool(konek);
   }
 
-  this.acquire = function(callback){
-    this.pool.getConnections(function(err, connection){
+  this.acquire = function(callback) {
+    this.pool.getConnection(function(err, connection) {
       callback(err, connection);
     });
-  }
+  };
 }
-
-module.exports = new connection();
+module.exports = new Connection();
