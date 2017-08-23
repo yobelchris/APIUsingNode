@@ -4,6 +4,26 @@ const FAIL = false;
 db.init();
 
 function API(){
+  this.findToken = function(token, cb) {
+    process.nextTick(function() {
+      db.acquire(function(err,con){
+        if(err){
+          console.log(err);
+          return cb(null, null);
+        }else{
+          con.query('SELECT token FROM akun WHERE token = ?',token,function(err,data){
+            con.release();
+            if(err){
+              return cb(err, null);
+            }else{
+              return cb(null, data);
+            }
+          });
+        }
+      })
+    });
+  };
+
   this.get = function(req,res,next){
     db.acquire(function(err,con){
       if(err){
@@ -20,7 +40,7 @@ function API(){
         });
       }
     });
-  }
+  };
 }
 
 module.exports = new API();

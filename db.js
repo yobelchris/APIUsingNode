@@ -4,6 +4,7 @@ function Connection() {
   this.pool = null;
 
   var konek = {
+    connectionLimit : 100,
     host     : 'localhost',
     user     : 'root',
     password : '',
