@@ -15,8 +15,14 @@ function API(){
             con.release();
             if(err){
               return cb(err, null);
+            }else if(data.length > 0){
+              if(data){
+                return cb(null, data);
+              }else{
+                return cb(null, null);
+              }
             }else{
-              return cb(null, data);
+              return cb(null, null);
             }
           });
         }
