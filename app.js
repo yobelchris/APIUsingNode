@@ -1,11 +1,10 @@
 var express = require("express");
 var bodyParser = require('body-parser');
-var  user = require('./route');
+var route = require('./route');
 
 var app = express();
 
-user.configure(app);
-
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+route.configure(app);
 module.exports = app;

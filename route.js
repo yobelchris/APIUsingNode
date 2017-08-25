@@ -13,6 +13,8 @@ passport.use(new Strategy(
 
 module.exports = {
   configure: function(app) {
-    app.route('/UserAPI/(:id)?').get(passport.authenticate('bearer',{session: false}),user.get);
+    app.route('/device/(:id)?').get(passport.authenticate('bearer',{session: false}),user.getDevice);
+    app.route('/login').post(user.loginAwal);
+    app.route('/SignUp').post(user.signUp);
   }
 };
