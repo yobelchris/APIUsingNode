@@ -27,7 +27,7 @@ function API(){
         if(err){
           return cb(err, null);
         }else{
-          return cb(null, data);
+          return cb(null, data[0].token);
         }
       });
     });
@@ -40,7 +40,7 @@ function API(){
         if(err){
           res.status(400).json({status:FAIL,result:err});
         }else{
-          res.status(200).json({status:SUCCESS,result:data});
+          res.status(200).json({status:SUCCESS,result:data[0]});
         }
       });
     }else{
@@ -56,12 +56,16 @@ function API(){
         if(err){
           res.status(400).json({status:FAIL,result:err});
         }else{
-          res.status(200).json({status:SUCCESS,result:[{token:data[0].token}]});
+          res.status(200).json({status:SUCCESS,result:{token:data[0].token}});
         }
       });
     }else{
       res.status(400).json({status:FAIL,result:'params not found'});
     }
+  };
+
+  this.withGmail = function(req,res){
+
   };
 
   this.signUp = function(req,res){
@@ -84,6 +88,37 @@ function API(){
     }else{
       res.status(400).json({status:FAIL,result:'params not found'});
     }
+  };
+
+  this.profile = function(req,res){
+    var tok = req.headers.authorization;
+    var tokimay = tok.substring(7,tok.length);
+    async.waterfall([
+      function(callback){
+        db.que('SELECT * FROM akun WHERE token = ?',tokimay,function(err,data){
+          if(err){
+            callback(err,null);
+          }else{
+            callback(null,data[0]);
+          }
+        });
+      },
+      function(dataUser,callback){
+        db.que('SELECT * FROM device WHERE email = ?',dataUser.email,function(err,data){
+          if(err){
+            callback(err,null,null);
+          }else{
+            callback(null,dataUser,data);
+          }
+        });
+      }
+    ],function(err,resultUser,resultDevice){
+      if(err){
+        res.status(400).json({status:FAIL,result:err});
+      }else{
+        res.status(200).json({status:SUCCESS,result:{profile:resultUser,devices:resultDevice}});
+      }
+    });
   };
 }
 

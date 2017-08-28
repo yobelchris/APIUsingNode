@@ -16,5 +16,6 @@ module.exports = {
     app.route('/device/(:id)?').get(passport.authenticate('bearer',{session: false}),user.getDevice);
     app.route('/login').post(user.loginAwal);
     app.route('/SignUp').post(user.signUp);
+    app.route('/profile').get(passport.authenticate('bearer',{session: false}),user.profile);
   }
 };
