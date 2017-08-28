@@ -35,7 +35,7 @@ function Connection() {
           }else if (data.length > 0) {
             return callback(null,data);
           }else{
-            return callback('other',null);
+            return callback('other',data);
           }
         });
       }

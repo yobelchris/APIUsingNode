@@ -64,8 +64,102 @@ function API(){
     }
   };
 
-  this.withGmail = function(req,res){
+  this.login = function(req,res){
+    res.status(200).json({status:SUCCESS});
+  };
 
+  this.withGmail = function(req,res){
+    var email = base64_decode(req.body.email);
+    var nama = base64_decode(req.body.name);
+    var password = generateToken.getPass();
+
+    if(email && nama){
+      async.waterfall([
+        function(callback){
+          db.que('SELECT * FROM akun WHERE email = ?',email,function(err,data){
+            if(err){
+              if(err=='other'){
+                callback(null,true,null);
+              }else{
+                callback(err,null,null);
+              }
+            }else{
+              callback(null,null,data[0].token);
+            }
+          });
+        },
+        function(insert,dataToken,callback){
+          if(insert){
+            var tok = generateToken.getToken(email,password);
+            db.que('INSERT INTO akun (email,nama,kata_sandi,token) VALUES (?,?,?,?)',[email,nama,password,tok],function(err,data){
+              if(err){
+                if(data.affectedRows > 0){
+                  callback(null,SUCCESS,tok);
+                }else{
+                  callback(err,null,null);
+                }
+              }else{
+                callback(null,SUCCESS,tok);
+              }
+            });
+          }else{
+            callback(null,SUCCESS,dataToken);
+          }
+        }
+      ],function(err,success,resultToken){
+        if(err){
+          res.status(400).json({status:FAIL,result:err});
+        }else{
+          res.status(200).json({status:SUCCESS,result:resultToken});
+        }
+      });
+    }else{
+      res.status(400).json({status:FAIL,result:'params not found'});
+    }
+  };
+
+  this.updateDevice = function(req,res){
+    var id = req.body.id;
+    var job = req.body.job;
+    var sql = null;
+    if(id && job){
+      switch (job) {
+        case "angkat":
+          sql = "servo = 'Angkat'";
+          break;
+        case "jemur":
+          sql = "servo = 'Jemur'";
+          break;
+        case "On":
+          sql = "status = 'On'";
+          break;
+        case "Off":
+          sql = "status = 'Off', servo = 'Angkat', auto = 'Manual'";
+          break;
+        case "Manual":
+          sql = "auto = 'Manual'";
+          break;
+        case "Otomatis":
+          sql = "auto = 'Otomatis'";
+          break;
+      }
+
+      if(sql){
+        db.que("UPDATE device SET "+sql+"WHERE device_id = ?",id,function(err,data){
+          if(err){
+            if(data.affectedRows == 1){
+              res.status(200).json({status:SUCCESS});
+            }else{
+              res.status(400).json({status:FAIL,result:err});
+            }
+          }else{
+            res.status(200).json({status:SUCCESS});
+          }
+        });
+      }
+    }else{
+      res.status(400).json({status:FAIL,result:'params not found'});
+    }
   };
 
   this.signUp = function(req,res){
@@ -76,7 +170,7 @@ function API(){
       var tok = generateToken.getToken(email,password);
       db.que('INSERT INTO akun (email,nama,kata_sandi,token) VALUES (?,?,?,?)',[email,nama,password,tok],function(err,data){
         if(err){
-          if(err=='other'){
+          if(data.affectedRows > 0){
             res.status(200).json({status:SUCCESS});
           }else{
             res.status(400).json({status:FAIL,result:err});

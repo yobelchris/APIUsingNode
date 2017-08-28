@@ -14,8 +14,11 @@ passport.use(new Strategy(
 module.exports = {
   configure: function(app) {
     app.route('/device/(:id)?').get(passport.authenticate('bearer',{session: false}),user.getDevice);
+    app.route('/profile').get(passport.authenticate('bearer',{session: false}),user.profile);
+    app.route('/update').put(passport.authenticate('bearer',{session: false}),user.updateDevice);
+    app.route('/login').get(passport.authenticate('bearer',{session: false}),user.login);
     app.route('/login').post(user.loginAwal);
     app.route('/SignUp').post(user.signUp);
-    app.route('/profile').get(passport.authenticate('bearer',{session: false}),user.profile);
+    app.route('/login/withGmail').post(user.withGmail);
   }
 };
